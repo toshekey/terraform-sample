@@ -8,7 +8,7 @@
 ## 各サンプル
 現在は下記のサンプルがあります。
 
-### GCPでのロードバランサ構築（HTTPのみ） gcp-lb
+### GCPでのロードバランサ構築（HTTPのみ） [gcp-lb](https://github.com/toshekey/terraform-sample/tree/master/gcp-lb)
 HTTPのみ解放したロードバランサを terraform で作成するコードです。  
 なお、terraform では GCP のロードバランサを作るには複数のリソースを
 組み合わせる必要があります。
