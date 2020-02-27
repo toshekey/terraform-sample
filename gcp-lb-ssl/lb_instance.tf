@@ -133,6 +133,31 @@ resource "google_compute_firewall" "firewall" {
   }
 }
 
+# 転送ルールの作成
+resource "google_compute_global_forwarding_rule" "global-forwarding-rule-https" {
+  name       = "global-forwarding-rule-https"
+  target     = google_compute_target_https_proxy.target-https-proxy.self_link
+  port_range = "443"
+  ip_address = google_compute_global_address.lb-address.address
+}
+
+# HTTPS転送ターゲット
+resource "google_compute_target_https_proxy" "target-https-proxy" {
+  name             = "target-https-proxy"
+  description      = "target-https-proxy"
+  url_map          = google_compute_url_map.url-map.self_link
+  ssl_certificates = [google_compute_managed_ssl_certificate.ssl.self_link]
+}
+
+resource "google_compute_managed_ssl_certificate" "ssl" {
+  provider = google-beta
+  name = "ssl"
+  managed {
+    domains = var.SSL_DOMAINS
+  }
+}
+
+
 # ロードバランサに紐づいたIPアドレスの出力
 output "lb-ipaddress" {
   value = google_compute_global_address.lb-address.address
