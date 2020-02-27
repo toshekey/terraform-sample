@@ -133,30 +133,39 @@ resource "google_compute_firewall" "firewall" {
   }
 }
 
+# 証明書の作成
+resource "google_compute_managed_ssl_certificate" "ssl" {
+  // このリソースはベータ機能のため、「google-beta」をプロバイダとして指定します。
+  provider = google-beta
+
+  // 名前はわかりやすいものを
+  name = "ssl"
+
+  managed {
+    // 証明書の common name となるドメイン名を設定
+    domains = var.SSL_DOMAINS
+  }
+}
+
+# HTTPS転送ターゲット
+# HTTP転送ターゲットとほぼ同じですが、証明書の設定が必須となります。
+resource "google_compute_target_https_proxy" "target-https-proxy" {
+  name             = "target-https-proxy"
+  description      = "target-https-proxy"
+  url_map          = google_compute_url_map.url-map.self_link
+
+  // 設定する証明書
+  ssl_certificates = [google_compute_managed_ssl_certificate.ssl.self_link]
+}
+
 # 転送ルールの作成
+# HTTPの転送ルールとほぼ同じですが、 port_range と target が変更必要
 resource "google_compute_global_forwarding_rule" "global-forwarding-rule-https" {
   name       = "global-forwarding-rule-https"
   target     = google_compute_target_https_proxy.target-https-proxy.self_link
   port_range = "443"
   ip_address = google_compute_global_address.lb-address.address
 }
-
-# HTTPS転送ターゲット
-resource "google_compute_target_https_proxy" "target-https-proxy" {
-  name             = "target-https-proxy"
-  description      = "target-https-proxy"
-  url_map          = google_compute_url_map.url-map.self_link
-  ssl_certificates = [google_compute_managed_ssl_certificate.ssl.self_link]
-}
-
-resource "google_compute_managed_ssl_certificate" "ssl" {
-  provider = google-beta
-  name = "ssl"
-  managed {
-    domains = var.SSL_DOMAINS
-  }
-}
-
 
 # ロードバランサに紐づいたIPアドレスの出力
 output "lb-ipaddress" {
