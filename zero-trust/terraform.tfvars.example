@@ -1,0 +1,4 @@
+https_auth_members = ["user:auth_user@example.com"] // 許可するユーザを記載。グループ単位で許可する場合は user を group に変更する。
+tunnel_auth_members = ["user:auth_user@example.com"] // 同上
+domains = ["example.com"] // LB経由で表示させるドメイン名を記載
+project_name = "PROJECT_NAME" // GCPのプロジェクトを記載

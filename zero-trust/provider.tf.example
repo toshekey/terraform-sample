@@ -1,0 +1,5 @@
+provider "google" {
+  credentials = file("file/to/path")
+  project     = "<PROJECT NAME>"
+  region      = "<DEFAULT REGION>"
+}
