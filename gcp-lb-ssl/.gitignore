@@ -1,3 +1,4 @@
 terraform.tfvars
 .terraform
 account.json
+*.png
